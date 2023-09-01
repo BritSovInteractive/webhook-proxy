@@ -36,6 +36,7 @@ const app = Express();
 const config = JSON.parse(fs.readFileSync('./config.json', 'utf8')) as {
     port: number;
     trustProxy: boolean;
+    authKey: string;
     autoBlock: boolean;
     queue: {
         enabled: boolean;
@@ -338,6 +339,15 @@ app.use(
     })
 );
 app.use(bodyParser.json());
+
+app.use(function(req, res, next) {
+    const auth = req.get("authorization");
+    if (auth === config.authKey) {
+        next();
+    } else {
+        res.status(401).end();
+    }
+});
 
 // catch spammers that ignore ratelimits in a way that can cause servers to yield for long periods of time
 const webhookPostRatelimit = slowDown({
