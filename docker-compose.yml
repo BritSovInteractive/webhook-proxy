@@ -11,6 +11,7 @@ services:
     ports:
       - 29812:8080
     volumes:
+      - ./config.json:/app/config.json
       - ./docker/proxy.db:/app/proxy.db
   rabbit:
     healthcheck:
