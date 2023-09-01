@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    depends_on:
+      rabbit:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    ports:
+      - 29812:8080
+    volumes:
+      - ./docker/proxy.db:/app/proxy.db
+  rabbit:
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    image: rabbitmq:management-alpine
+    # volumes:
+      # - ./docker/rabbitmq/data/:/var/lib/rabbitmq/
+      # - ./docker/rabbitmq/log/:/var/log/rabbitmq
+  cache:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - ./docker/cache:/data

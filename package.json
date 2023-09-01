@@ -1,8 +1,9 @@
 {
     "scripts": {
         "update": "git pull && yarn && yarn build && pm2 reload webhook-proxy webhook-proxy-processor || true",
-        "build": "prisma migrate deploy && prisma generate && rimraf dist && tsc",
-        "start": "yarn build && node dist"
+        "build:db": "prisma migrate deploy && prisma generate",
+        "build": "yarn build:db && yarn rimraf dist && yarn tsc",
+        "start": "ts-node --transpile-only src/index.ts"
     },
     "dependencies": {
         "@prisma/client": "^3.14.0",
@@ -14,7 +15,8 @@
         "express-slow-down": "^1.4.0",
         "helmet": "^4.6.0",
         "ioredis": "^4.28.1",
-        "rate-limit-redis": "^2.1.0"
+        "rate-limit-redis": "^2.1.0",
+        "ts-node": "^10.9.1"
     },
     "devDependencies": {
         "@types/amqplib": "^0.8.2",
